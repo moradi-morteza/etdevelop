@@ -1,0 +1,7 @@
+{
+    "require": {
+        "nutgram/nutgram": "^4.39",
+      "ext-json": "*",
+      "ext-curl": "*"
+    }
+}
