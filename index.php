@@ -133,7 +133,7 @@ $bot->onMessage(function (Nutgram $bot) use ($logger) {
 });
 
 $bot->onText('hi', function (Nutgram $bot) use ($logger) {
-    $logger->log("TEXT COMMAND: hi", json_encode($bot->message()));
+    $logger->log("TEXT COMMAND: hi", ($bot->message()));
     $bot->sendMessage('hello');
 });
 
