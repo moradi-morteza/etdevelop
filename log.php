@@ -134,14 +134,32 @@ if (file_exists($logFile)) {
                             if (empty($entry)) continue;
                             
                             // Extract timestamp and message
-                            preg_match('/^\[([^\]]+)\]\s*(.*)/', $entry, $matches);
+                            preg_match('/^\[([^\]]+)\]\s*(.*)$/s', $entry, $matches);
                             $timestamp = $matches[1] ?? 'Unknown';
                             $restOfEntry = $matches[2] ?? $entry;
                             
                             // Extract the main message before DATA:
-                            $parts = explode("\nDATA:", $restOfEntry, 2);
-                            $mainMessage = trim($parts[0]);
-                            $jsonData = isset($parts[1]) ? trim($parts[1]) : '';
+                            if (strpos($restOfEntry, "\nDATA:") !== false) {
+                                $parts = explode("\nDATA:", $restOfEntry, 2);
+                                $mainMessage = trim($parts[0]);
+                                $rawJsonData = isset($parts[1]) ? trim($parts[1]) : '';
+                                
+                                // Try to format JSON better
+                                if (!empty($rawJsonData)) {
+                                    // Try to decode and re-encode for better formatting
+                                    $decoded = json_decode($rawJsonData, true);
+                                    if ($decoded !== null) {
+                                        $jsonData = json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                                    } else {
+                                        $jsonData = $rawJsonData;
+                                    }
+                                } else {
+                                    $jsonData = '';
+                                }
+                            } else {
+                                $mainMessage = trim($restOfEntry);
+                                $jsonData = '';
+                            }
                             
                             // Create a unique time-based ID
                             $timeId = strtotime($timestamp);
@@ -231,8 +249,18 @@ if (file_exists($logFile)) {
                             <!-- JSON Data -->
                             <?php if (!empty($jsonData)): ?>
                                 <div class="px-6 py-4">
-                                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                                        <pre id="json-<?= $uniqueId ?>" class="text-green-400 font-mono text-xs whitespace-pre-wrap leading-relaxed"><?= htmlspecialchars($jsonData) ?></pre>
+                                    <div class="border-t border-gray-100 pt-4">
+                                        <button onclick="toggleJson('json-container-<?= $uniqueId ?>')" class="flex items-center text-sm text-gray-600 hover:text-gray-800 mb-3">
+                                            <svg id="json-icon-<?= $uniqueId ?>" class="w-4 h-4 mr-2 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                            <span class="font-medium">View JSON Data</span>
+                                        </button>
+                                        <div id="json-container-<?= $uniqueId ?>" class="hidden">
+                                            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto max-h-96 overflow-y-auto">
+                                                <pre id="json-<?= $uniqueId ?>" class="text-green-400 font-mono text-xs whitespace-pre-wrap leading-relaxed"><?= htmlspecialchars($jsonData) ?></pre>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -305,6 +333,19 @@ if (file_exists($logFile)) {
                 btn.textContent = 'Disable';
                 btn.classList.remove('text-blue-500');
                 btn.classList.add('text-red-500');
+            }
+        }
+        
+        function toggleJson(containerId) {
+            const container = document.getElementById(containerId);
+            const icon = document.getElementById(containerId.replace('json-container-', 'json-icon-'));
+            
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                container.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
             }
         }
         
