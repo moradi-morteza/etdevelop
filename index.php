@@ -11,7 +11,7 @@ use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\RunningMode\Webhook;
 // Configuration - Set BOT_TYPE in your Const.php file
 // Options: 'nutgram' or 'purephp'
-$botType = defined('BOT_TYPE') ? BOT_TYPE : 'nutgram';
+$botType = defined('BOT_TYPE') ? BOT_TYPE : 'purephp';
 
 class BotLogger {
     private $logFile;
