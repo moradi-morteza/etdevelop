@@ -31,7 +31,7 @@ class BotLogger {
         
         $logEntry .= "\n" . str_repeat('-', 80) . "\n";
         
-        file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
+        file_put_contents($this->logFile, $logEntry, FILE_APPEND);
     }
     
     public function logUpdate($update): void
