@@ -341,6 +341,7 @@ class NutgramBot {
                 $localPath = $storageDir . '/' . $fileName;
                 
                 // Download file
+                $this->logger->log("download from $fileUrl" );
                 $fileContent = file_get_contents($fileUrl);
                 if ($fileContent !== false) {
                     file_put_contents($localPath, $fileContent);
@@ -800,6 +801,7 @@ class PurePHPBot {
                 $localPath = $storageDir . '/' . $fileName;
                 
                 // Download file
+                $this->logger->log("download from $fileUrl" );
                 $fileContent = file_get_contents($fileUrl);
                 if ($fileContent !== false) {
                     file_put_contents($localPath, $fileContent);
