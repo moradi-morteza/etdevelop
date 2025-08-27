@@ -52,9 +52,19 @@
                 <div class="button-group">
                     <button id="sendData" class="btn primary">Send Data to Bot</button>
                     <button id="shareLink" class="btn primary">Share App Link</button>
+                    <button id="autoInlineResponse" class="btn success">Auto Inline Response</button>
                 </div>
                 <div class="data-input">
                     <input type="text" id="dataInput" placeholder="Enter data to send to bot">
+                </div>
+                <div class="received-data" id="receivedDataSection" style="display: none;">
+                    <h4>📥 Received from Bot:</h4>
+                    <div class="received-content" id="receivedContent"></div>
+                    <div class="button-group">
+                        <button id="createArticleFromData" class="btn info">Create Article Result</button>
+                        <button id="createPhotoFromData" class="btn info">Create Photo Result</button>
+                        <button id="createGifFromData" class="btn info">Create GIF Result</button>
+                    </div>
                 </div>
             </div>
 

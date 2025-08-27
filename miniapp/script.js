@@ -1,6 +1,9 @@
 // Initialize Telegram Web App
 let tg = window.Telegram.WebApp;
 
+// Global variable to store received data from bot
+let receivedBotData = null;
+
 // DOM elements
 const elements = {
     userInfo: document.getElementById('userInfo'),
@@ -32,6 +35,12 @@ const elements = {
     resultDescription: document.getElementById('resultDescription'),
     resultContent: document.getElementById('resultContent'),
     resultType: document.getElementById('resultType'),
+    autoInlineResponse: document.getElementById('autoInlineResponse'),
+    receivedDataSection: document.getElementById('receivedDataSection'),
+    receivedContent: document.getElementById('receivedContent'),
+    createArticleFromData: document.getElementById('createArticleFromData'),
+    createPhotoFromData: document.getElementById('createPhotoFromData'),
+    createGifFromData: document.getElementById('createGifFromData'),
     platform: document.getElementById('platform'),
     version: document.getElementById('version'),
     colorScheme: document.getElementById('colorScheme'),
@@ -49,6 +58,173 @@ function logEvent(message, type = 'info') {
     elements.eventLog.appendChild(logEntry);
     elements.eventLog.scrollTop = elements.eventLog.scrollHeight;
     console.log(`[${timestamp}] ${message}`);
+}
+
+// Handle received data from bot (via URL parameters or initial data)
+function handleReceivedData() {
+    // Check for data in URL parameters (when opening from inline query)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlData = urlParams.get('data');
+    
+    // Check for data in initData
+    const initData = tg.initDataUnsafe?.start_param;
+    
+    // Use URL data first, then initData
+    const data = urlData || initData;
+    
+    if (data) {
+        try {
+            // Try to parse as JSON first, fallback to string
+            receivedBotData = JSON.parse(decodeURIComponent(data));
+            logEvent(`Received structured data from bot: ${JSON.stringify(receivedBotData)}`, 'info');
+        } catch (e) {
+            // If JSON parsing fails, treat as plain string
+            receivedBotData = decodeURIComponent(data);
+            logEvent(`Received string data from bot: ${receivedBotData}`, 'info');
+        }
+        
+        // Display received data
+        displayReceivedData();
+        
+        // Auto-create inline response if query_id exists
+        if (tg.initDataUnsafe?.query_id) {
+            logEvent('Auto-creating inline response from received data', 'info');
+            setTimeout(() => autoCreateInlineResponse(), 1000); // Small delay for better UX
+        }
+    }
+}
+
+// Display received data in the UI
+function displayReceivedData() {
+    if (!receivedBotData) return;
+    
+    elements.receivedDataSection.style.display = 'block';
+    
+    if (typeof receivedBotData === 'object') {
+        elements.receivedContent.innerHTML = `<pre>${JSON.stringify(receivedBotData, null, 2)}</pre>`;
+    } else {
+        elements.receivedContent.innerHTML = `<p>${receivedBotData}</p>`;
+    }
+    
+    logEvent('Displayed received data in UI', 'success');
+}
+
+// Auto-create inline response based on received data
+function autoCreateInlineResponse() {
+    const queryId = tg.initDataUnsafe?.query_id;
+    if (!queryId || !receivedBotData) return;
+    
+    let title, description, messageText;
+    
+    if (typeof receivedBotData === 'object') {
+        title = receivedBotData.title || 'Generated from Bot Data';
+        description = receivedBotData.description || 'Auto-generated inline result';
+        messageText = receivedBotData.message || JSON.stringify(receivedBotData, null, 2);
+    } else {
+        title = 'Bot Response';
+        description = receivedBotData.substring(0, 100) + (receivedBotData.length > 100 ? '...' : '');
+        messageText = receivedBotData;
+    }
+    
+    const result = {
+        type: 'article',
+        id: 'auto_response_' + Date.now(),
+        title: title,
+        description: description,
+        input_message_content: {
+            message_text: messageText,
+            parse_mode: 'HTML'
+        },
+        thumb_url: 'https://via.placeholder.com/150x150.png?text=Auto'
+    };
+    
+    try {
+        tg.answerWebAppQuery(queryId, result);
+        logEvent('Auto inline response sent successfully', 'success');
+        tg.HapticFeedback.notificationOccurred('success');
+    } catch (error) {
+        logEvent(`Error sending auto inline response: ${error.message}`, 'error');
+        tg.HapticFeedback.notificationOccurred('error');
+    }
+}
+
+// Create specific inline response types from received data
+function createInlineResponseFromData(type) {
+    const queryId = tg.initDataUnsafe?.query_id;
+    if (!queryId) {
+        tg.showAlert('This feature only works when opened from an inline query');
+        return;
+    }
+    
+    if (!receivedBotData) {
+        tg.showAlert('No data received from bot to create inline response');
+        return;
+    }
+    
+    let result;
+    const resultId = `data_${type}_` + Date.now();
+    let title, description, messageText;
+    
+    if (typeof receivedBotData === 'object') {
+        title = receivedBotData.title || `${type.toUpperCase()} Result`;
+        description = receivedBotData.description || 'Generated from bot data';
+        messageText = receivedBotData.message || JSON.stringify(receivedBotData, null, 2);
+    } else {
+        title = `${type.toUpperCase()} Result`;
+        description = receivedBotData.substring(0, 100) + (receivedBotData.length > 100 ? '...' : '');
+        messageText = receivedBotData;
+    }
+    
+    switch (type) {
+        case 'article':
+            result = {
+                type: 'article',
+                id: resultId,
+                title: title,
+                description: description,
+                input_message_content: {
+                    message_text: messageText,
+                    parse_mode: 'HTML'
+                },
+                thumb_url: 'https://via.placeholder.com/150x150.png?text=Article'
+            };
+            break;
+            
+        case 'photo':
+            result = {
+                type: 'photo',
+                id: resultId,
+                title: title,
+                description: description,
+                photo_url: receivedBotData.photo_url || 'https://via.placeholder.com/800x600.jpg?text=Generated+Photo',
+                thumb_url: receivedBotData.thumb_url || 'https://via.placeholder.com/150x150.jpg?text=Photo',
+                caption: messageText,
+                parse_mode: 'HTML'
+            };
+            break;
+            
+        case 'gif':
+            result = {
+                type: 'gif',
+                id: resultId,
+                title: title,
+                gif_url: receivedBotData.gif_url || 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif',
+                thumb_url: receivedBotData.thumb_url || 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/200_s.gif',
+                caption: messageText,
+                parse_mode: 'HTML'
+            };
+            break;
+    }
+    
+    try {
+        tg.answerWebAppQuery(queryId, result);
+        logEvent(`${type} inline response sent from received data`, 'success');
+        tg.HapticFeedback.notificationOccurred('success');
+    } catch (error) {
+        logEvent(`Error sending ${type} inline response: ${error.message}`, 'error');
+        tg.HapticFeedback.notificationOccurred('error');
+        tg.showAlert(`Error sending ${type} response: ` + error.message);
+    }
 }
 
 // Initialize app
@@ -78,6 +254,9 @@ function initApp() {
     
     // Set up back button
     setupBackButton();
+    
+    // Handle received data from bot
+    handleReceivedData();
     
     logEvent('App initialized successfully!', 'success');
 }
@@ -244,6 +423,32 @@ function setupEventListeners() {
         const url = 'https://t.me/share/url?url=' + encodeURIComponent(window.location.href);
         tg.openLink(url);
         logEvent('Share link opened', 'info');
+    });
+
+    // Auto inline response toggle
+    elements.autoInlineResponse.addEventListener('click', () => {
+        if (tg.initDataUnsafe?.query_id && receivedBotData) {
+            autoCreateInlineResponse();
+        } else if (!tg.initDataUnsafe?.query_id) {
+            tg.showAlert('This feature only works when opened from an inline query');
+            logEvent('Auto inline response attempted without query_id', 'warning');
+        } else if (!receivedBotData) {
+            tg.showAlert('No data received from bot to create inline response');
+            logEvent('Auto inline response attempted without received data', 'warning');
+        }
+    });
+
+    // Create inline responses from received data
+    elements.createArticleFromData.addEventListener('click', () => {
+        createInlineResponseFromData('article');
+    });
+
+    elements.createPhotoFromData.addEventListener('click', () => {
+        createInlineResponseFromData('photo');
+    });
+
+    elements.createGifFromData.addEventListener('click', () => {
+        createInlineResponseFromData('gif');
     });
 
     // Theme and settings

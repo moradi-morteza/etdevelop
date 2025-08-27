@@ -255,6 +255,46 @@ header h1 {
     gap: var(--spacing-sm);
 }
 
+/* Received data display */
+.received-data {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--tg-bg-color);
+    border: 2px solid var(--tg-link-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(36, 129, 204, 0.1);
+}
+
+.received-data h4 {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--tg-link-color);
+    font-size: 1.1rem;
+}
+
+.received-content {
+    background: var(--tg-secondary-bg-color);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--spacing-md);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    max-height: 200px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.received-content pre {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--tg-text-color);
+}
+
+.received-content p {
+    margin: 0;
+    color: var(--tg-text-color);
+}
+
 /* Theme info */
 .theme-info {
     margin-top: var(--spacing-md);
