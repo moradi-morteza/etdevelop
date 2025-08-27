@@ -595,7 +595,7 @@ class PurePHPBot {
         $update = json_decode($input, true);
         
         if (!$update) {
-            $this->logger->log("INVALID UPDATE RECEIVED");
+            $this->logger->log("INVALID UPDATE RECEIVED : ".$input);
             return;
         }
         
