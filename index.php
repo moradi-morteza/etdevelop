@@ -16,8 +16,13 @@ $botType = defined('BOT_TYPE') ? BOT_TYPE : 'purephp';
 class BotLogger {
     private $logFile;
     
-    public function __construct($logFile = 'bot.log') {
+    public function __construct($logFile = 'storage/bot.log') {
         $this->logFile = $logFile;
+        // Ensure storage directory exists
+        $dir = dirname($this->logFile);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
     }
     
     public function log($message, $data = null): void
@@ -294,6 +299,9 @@ class NutgramBot {
             ];
         }
         
+        // Save file to storage folder
+        $this->saveFileToStorage($bot, $fileDetails, $type);
+        
         $this->logger->log(strtoupper($type) . " RECEIVED", [
             'chat_id' => $bot->chatId(),
             'user_id' => $bot->userId(),
@@ -301,6 +309,55 @@ class NutgramBot {
         ]);
         
         $bot->sendMessage(json_encode($fileDetails, JSON_PRETTY_PRINT));
+    }
+    
+    private function saveFileToStorage($bot, $fileDetails, $type): void
+    {
+        try {
+            // Get file info from Telegram API
+            $fileResponse = $bot->api('getFile', ['file_id' => $fileDetails['file_id']]);
+            
+            if ($fileResponse && isset($fileResponse['file_path'])) {
+                $filePath = $fileResponse['file_path'];
+                $fileUrl = "https://api.telegram.org/file/bot" . $bot->getToken() . "/" . $filePath;
+                
+                // Determine filename
+                $fileName = $fileDetails['file_name'] ?? null;
+                if (!$fileName) {
+                    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                    $fileName = $fileDetails['file_unique_id'] . '.' . $extension;
+                }
+                
+                // Create storage path
+                $storageDir = __DIR__ . '/storage';
+                if (!is_dir($storageDir)) {
+                    mkdir($storageDir, 0755, true);
+                }
+                
+                $localPath = $storageDir . '/' . $fileName;
+                
+                // Download file
+                $fileContent = file_get_contents($fileUrl);
+                if ($fileContent !== false) {
+                    file_put_contents($localPath, $fileContent);
+                    $this->logger->log(strtoupper($type) . " SAVED TO STORAGE", [
+                        'original_name' => $fileName,
+                        'local_path' => $localPath,
+                        'file_size' => filesize($localPath)
+                    ]);
+                } else {
+                    $this->logger->log("FAILED TO DOWNLOAD " . strtoupper($type), [
+                        'file_id' => $fileDetails['file_id'],
+                        'file_url' => $fileUrl
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            $this->logger->log("ERROR SAVING " . strtoupper($type) . " TO STORAGE", [
+                'error' => $e->getMessage(),
+                'file_id' => $fileDetails['file_id']
+            ]);
+        }
     }
     
     public function run(): void
@@ -655,9 +712,61 @@ class PurePHPBot {
             $logData['photo_count'] = $photo_count;
         }
         
+        // Save file to storage folder
+        $this->saveFileToStoragePHP($fileDetails, $type);
+        
         $this->logger->log(strtoupper($type) . " RECEIVED", $logData);
         
         $this->sendMessage($chat_id, json_encode($fileDetails, JSON_PRETTY_PRINT));
+    }
+    
+    private function saveFileToStoragePHP($fileDetails, $type): void
+    {
+        try {
+            // Get file info from Telegram API
+            $fileResponse = $this->apiRequest('getFile', ['file_id' => $fileDetails['file_id']]);
+            
+            if ($fileResponse && isset($fileResponse['result']['file_path'])) {
+                $filePath = $fileResponse['result']['file_path'];
+                $fileUrl = "https://api.telegram.org/file/bot{$this->token}/" . $filePath;
+                
+                // Determine filename
+                $fileName = $fileDetails['file_name'] ?? null;
+                if (!$fileName) {
+                    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                    $fileName = $fileDetails['file_unique_id'] . '.' . $extension;
+                }
+                
+                // Create storage path
+                $storageDir = __DIR__ . '/storage';
+                if (!is_dir($storageDir)) {
+                    mkdir($storageDir, 0755, true);
+                }
+                
+                $localPath = $storageDir . '/' . $fileName;
+                
+                // Download file
+                $fileContent = file_get_contents($fileUrl);
+                if ($fileContent !== false) {
+                    file_put_contents($localPath, $fileContent);
+                    $this->logger->log(strtoupper($type) . " SAVED TO STORAGE", [
+                        'original_name' => $fileName,
+                        'local_path' => $localPath,
+                        'file_size' => filesize($localPath)
+                    ]);
+                } else {
+                    $this->logger->log("FAILED TO DOWNLOAD " . strtoupper($type), [
+                        'file_id' => $fileDetails['file_id'],
+                        'file_url' => $fileUrl
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            $this->logger->log("ERROR SAVING " . strtoupper($type) . " TO STORAGE", [
+                'error' => $e->getMessage(),
+                'file_id' => $fileDetails['file_id']
+            ]);
+        }
     }
     
     public function run(): void

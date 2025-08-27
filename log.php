@@ -1,5 +1,5 @@
 <?php
-$logFile = 'bot.log';
+$logFile = 'storage/bot.log';
 $logContent = '';
 $fileExists = false;
 $message = '';

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(if [ -f \"bot.log\" ])",
+      "Bash(then mv bot.log storage/)",
+      "Bash(fi)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
