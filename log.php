@@ -14,7 +14,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'clear' && file_exists($logF
 }
 
 // Pagination settings
-$entriesPerPage = 10;
+$entriesPerPage = 200;
 $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 
 if (file_exists($logFile)) {
@@ -214,12 +214,9 @@ if (file_exists($logFile)) {
                         ?>
                         <div class="<?= $config['bg'] ?> <?= $config['border'] ?> border-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
                             <!-- Card Header -->
-                            <div class="px-6 py-4 border-b border-gray-100">
+                            <div class="px-4 py-2 border-b border-gray-100">
                                 <div class="flex items-start justify-between">
                                     <div class="flex items-center space-x-3">
-                                        <div class="<?= $config['iconColor'] ?> flex-shrink-0">
-                                            <?= $config['icon'] ?>
-                                        </div>
                                         <div>
                                             <div class="flex items-center gap-3">
                                                 <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
@@ -248,8 +245,8 @@ if (file_exists($logFile)) {
                             
                             <!-- JSON Data -->
                             <?php if (!empty($jsonData)): ?>
-                                <div class="px-6 py-4">
-                                    <div class="border-t border-gray-100 pt-4">
+                                <div class="px-2 py-2">
+                                    <div class="pt-1">
                                         <button onclick="toggleJson('json-container-<?= $uniqueId ?>')" class="flex items-center text-sm text-gray-600 hover:text-gray-800 mb-3">
                                             <svg id="json-icon-<?= $uniqueId ?>" class="w-4 h-4 mr-2 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
