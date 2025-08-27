@@ -156,6 +156,7 @@ class NutgramBot {
         
         $this->bot->onText('hi', function ($bot) {
             $this->logger->log("TEXT COMMAND: hi", ($bot->message()));
+            $this->logOutgoingRequest('sendMessage', $bot->chatId(), ['text' => 'hello']);
             $bot->sendMessage('hello');
         });
         
@@ -218,9 +219,11 @@ class NutgramBot {
                 'path' => $filePath
             ];
             $caption = json_encode($fileInfo, JSON_PRETTY_PRINT);
+            $this->logOutgoingRequest($method, $bot->chatId(), ['caption' => $caption, 'file_path' => $filePath]);
             $bot->$method(fopen($filePath, 'r'), caption: $caption);
             $this->logger->log(strtoupper($type) . " SENT SUCCESSFULLY", $fileInfo);
         } else {
+            $this->logOutgoingRequest('sendMessage', $bot->chatId(), ['text' => ucfirst($type) . ' file not found.']);
             $bot->sendMessage(ucfirst($type) . ' file not found.');
             $this->logger->log(strtoupper($type) . " FILE NOT FOUND", ['path' => $filePath]);
         }
@@ -308,6 +311,7 @@ class NutgramBot {
             $type . '_details' => $fileDetails
         ]);
         
+        $this->logOutgoingRequest('sendMessage', $bot->chatId(), ['text' => json_encode($fileDetails, JSON_PRETTY_PRINT)]);
         $bot->sendMessage(json_encode($fileDetails, JSON_PRETTY_PRINT));
     }
     
@@ -360,6 +364,17 @@ class NutgramBot {
         }
     }
     
+    private function logOutgoingRequest($method, $chatId, $parameters = []): void
+    {
+        $url = "https://api.telegram.org/bot" . $this->bot->getToken() . "/" . $method;
+        $this->logger->log("OUTGOING REQUEST", [
+            'method' => $method,
+            'url' => $url,
+            'chat_id' => $chatId,
+            'parameters' => $parameters
+        ]);
+    }
+    
     public function run(): void
     {
         $this->logger->log("NUTGRAM BOT STARTED - Webhook mode activated");
@@ -378,6 +393,13 @@ class PurePHPBot {
     
     private function apiRequest($method, $parameters = []) {
         $url = "https://api.telegram.org/bot{$this->token}/{$method}";
+        
+        // Log outgoing request
+        $this->logger->log("OUTGOING REQUEST", [
+            'method' => $method,
+            'url' => $url,
+            'parameters' => $parameters
+        ]);
         
         $postData = http_build_query($parameters);
         
@@ -414,6 +436,14 @@ class PurePHPBot {
         
         $url = "https://api.telegram.org/bot{$this->token}/sendPhoto";
         
+        // Log outgoing request
+        $this->logger->log("OUTGOING REQUEST", [
+            'method' => 'sendPhoto',
+            'url' => $url,
+            'chat_id' => $chat_id,
+            'parameters' => ['caption' => $caption, 'photo_path' => $photo_path]
+        ]);
+        
         $postData = [
             'chat_id' => $chat_id,
             'caption' => $caption,
@@ -445,6 +475,14 @@ class PurePHPBot {
         }
         
         $url = "https://api.telegram.org/bot{$this->token}/sendVideo";
+        
+        // Log outgoing request
+        $this->logger->log("OUTGOING REQUEST", [
+            'method' => 'sendVideo',
+            'url' => $url,
+            'chat_id' => $chat_id,
+            'parameters' => ['caption' => $caption, 'video_path' => $video_path]
+        ]);
         
         $postData = [
             'chat_id' => $chat_id,
@@ -478,6 +516,14 @@ class PurePHPBot {
         
         $url = "https://api.telegram.org/bot{$this->token}/sendDocument";
         
+        // Log outgoing request
+        $this->logger->log("OUTGOING REQUEST", [
+            'method' => 'sendDocument',
+            'url' => $url,
+            'chat_id' => $chat_id,
+            'parameters' => ['caption' => $caption, 'document_path' => $document_path]
+        ]);
+        
         $postData = [
             'chat_id' => $chat_id,
             'caption' => $caption,
@@ -509,6 +555,14 @@ class PurePHPBot {
         }
         
         $url = "https://api.telegram.org/bot{$this->token}/sendAudio";
+        
+        // Log outgoing request
+        $this->logger->log("OUTGOING REQUEST", [
+            'method' => 'sendAudio',
+            'url' => $url,
+            'chat_id' => $chat_id,
+            'parameters' => ['caption' => $caption, 'audio_path' => $audio_path]
+        ]);
         
         $postData = [
             'chat_id' => $chat_id,
