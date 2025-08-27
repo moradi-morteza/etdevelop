@@ -526,7 +526,7 @@ class PurePHPBot {
             $messageData['audio'] = $message['audio'];
         }
         
-        $this->logger->log("MESSAGE RECEIVED", $messageData);
+        $this->logger->log("MESSAGE RECEIVED", $message);
         
         if ($text) {
             switch (strtolower($text)) {
