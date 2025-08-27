@@ -1,0 +1,429 @@
+/* CSS Variables for Telegram theme colors */
+:root {
+    --tg-bg-color: #ffffff;
+    --tg-text-color: #000000;
+    --tg-hint-color: #999999;
+    --tg-link-color: #2481cc;
+    --tg-button-color: #2481cc;
+    --tg-button-text-color: #ffffff;
+    --tg-secondary-bg-color: #f1f1f1;
+    
+    /* Custom colors */
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+    --info-color: #2196f3;
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* Border radius */
+    --border-radius: 8px;
+    --border-radius-sm: 4px;
+    --border-radius-lg: 12px;
+}
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--tg-bg-color);
+    color: var(--tg-text-color);
+    line-height: 1.5;
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 100%;
+    padding: var(--spacing-md);
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg) 0;
+    border-bottom: 1px solid var(--tg-hint-color);
+}
+
+header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--tg-text-color);
+}
+
+.user-info {
+    background: var(--tg-secondary-bg-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    display: inline-block;
+}
+
+#userName {
+    font-weight: 500;
+    color: var(--tg-link-color);
+}
+
+/* Sections */
+.section {
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--tg-secondary-bg-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: var(--tg-text-color);
+    border-bottom: 2px solid var(--tg-link-color);
+    padding-bottom: var(--spacing-sm);
+}
+
+/* Button styles */
+.btn {
+    background: var(--tg-button-color);
+    color: var(--tg-button-text-color);
+    border: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+    text-align: center;
+    min-width: 120px;
+    margin: var(--spacing-xs);
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn.small {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.85rem;
+    min-width: auto;
+}
+
+/* Button variants */
+.btn.primary {
+    background: var(--tg-button-color);
+    color: var(--tg-button-text-color);
+}
+
+.btn.secondary {
+    background: var(--tg-hint-color);
+    color: var(--tg-bg-color);
+}
+
+.btn.success {
+    background: var(--success-color);
+    color: white;
+}
+
+.btn.error {
+    background: var(--error-color);
+    color: white;
+}
+
+.btn.warning {
+    background: var(--warning-color);
+    color: white;
+}
+
+.btn.info {
+    background: var(--info-color);
+    color: white;
+}
+
+.btn.haptic {
+    background: linear-gradient(45deg, var(--tg-button-color), var(--tg-link-color));
+    position: relative;
+    overflow: hidden;
+}
+
+.btn.haptic::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn.haptic:hover::before {
+    left: 100%;
+}
+
+/* Button groups */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 480px) {
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        margin: var(--spacing-xs) 0;
+    }
+}
+
+/* Input styles */
+.data-input {
+    margin-top: var(--spacing-md);
+}
+
+.data-input input {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--tg-hint-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: var(--tg-bg-color);
+    color: var(--tg-text-color);
+    transition: border-color 0.2s ease;
+}
+
+.data-input input:focus {
+    outline: none;
+    border-color: var(--tg-link-color);
+    box-shadow: 0 0 0 3px rgba(36, 129, 204, 0.1);
+}
+
+.data-input input::placeholder {
+    color: var(--tg-hint-color);
+}
+
+/* Theme info */
+.theme-info {
+    margin-top: var(--spacing-md);
+}
+
+.color-box {
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    text-align: center;
+    font-weight: 500;
+    border: 2px solid var(--tg-hint-color);
+    transition: all 0.3s ease;
+}
+
+/* App info grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.info-item {
+    padding: var(--spacing-md);
+    background: var(--tg-bg-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--tg-hint-color);
+}
+
+.info-item strong {
+    display: block;
+    color: var(--tg-link-color);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.info-item span {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Event log */
+.log-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.event-log {
+    background: var(--tg-bg-color);
+    border: 1px solid var(--tg-hint-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    height: 200px;
+    overflow-y: auto;
+    margin-bottom: var(--spacing-md);
+}
+
+.log-entry {
+    margin-bottom: var(--spacing-xs);
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    word-wrap: break-word;
+}
+
+.log-entry.info {
+    background: rgba(33, 150, 243, 0.1);
+    border-left: 3px solid var(--info-color);
+}
+
+.log-entry.success {
+    background: rgba(76, 175, 80, 0.1);
+    border-left: 3px solid var(--success-color);
+}
+
+.log-entry.warning {
+    background: rgba(255, 152, 0, 0.1);
+    border-left: 3px solid var(--warning-color);
+}
+
+.log-entry.error {
+    background: rgba(244, 67, 54, 0.1);
+    border-left: 3px solid var(--error-color);
+}
+
+.timestamp {
+    color: var(--tg-hint-color);
+    font-size: 0.8rem;
+    margin-right: var(--spacing-xs);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .section {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .section h2 {
+        font-size: 1.2rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+        padding: var(--spacing-md);
+    }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --tg-bg-color: #1a1a1a;
+        --tg-text-color: #ffffff;
+        --tg-hint-color: #8e8e93;
+        --tg-secondary-bg-color: #2c2c2e;
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(36, 129, 204, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(36, 129, 204, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(36, 129, 204, 0);
+    }
+}
+
+.btn.haptic:active {
+    animation: pulse 0.3s;
+}
+
+/* Scrollbar styling */
+.event-log::-webkit-scrollbar {
+    width: 6px;
+}
+
+.event-log::-webkit-scrollbar-track {
+    background: var(--tg-secondary-bg-color);
+    border-radius: 3px;
+}
+
+.event-log::-webkit-scrollbar-thumb {
+    background: var(--tg-hint-color);
+    border-radius: 3px;
+}
+
+.event-log::-webkit-scrollbar-thumb:hover {
+    background: var(--tg-link-color);
+}
+
+/* Loading states */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Focus states for accessibility */
+.btn:focus,
+input:focus {
+    outline: 2px solid var(--tg-link-color);
+    outline-offset: 2px;
+}
+
+/* Telegram-specific adjustments */
+body.tg-viewport-stable {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+body.tg-viewport-expanded {
+    padding-bottom: 0;
+}

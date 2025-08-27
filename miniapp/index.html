@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Mini App Demo</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Telegram Mini App Demo</h1>
+            <div class="user-info" id="userInfo">
+                <span id="userName">Loading...</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="section">
+                <h2>Basic Controls</h2>
+                <div class="button-group">
+                    <button id="expandBtn" class="btn primary">Expand App</button>
+                    <button id="closeBtn" class="btn secondary">Close App</button>
+                    <button id="toggleMainBtn" class="btn primary">Toggle Main Button</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Haptic Feedback</h2>
+                <div class="button-group">
+                    <button id="vibrateLight" class="btn haptic">Light Vibrate</button>
+                    <button id="vibrateMedium" class="btn haptic">Medium Vibrate</button>
+                    <button id="vibrateHeavy" class="btn haptic">Heavy Vibrate</button>
+                    <button id="vibrateError" class="btn haptic error">Error Vibrate</button>
+                    <button id="vibrateSuccess" class="btn haptic success">Success Vibrate</button>
+                    <button id="vibrateWarning" class="btn haptic warning">Warning Vibrate</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Pop-ups & Alerts</h2>
+                <div class="button-group">
+                    <button id="showAlert" class="btn info">Show Alert</button>
+                    <button id="showConfirm" class="btn info">Show Confirm</button>
+                    <button id="showPopup" class="btn info">Show Popup</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Data Sharing</h2>
+                <div class="button-group">
+                    <button id="sendData" class="btn primary">Send Data to Bot</button>
+                    <button id="shareLink" class="btn primary">Share App Link</button>
+                </div>
+                <div class="data-input">
+                    <input type="text" id="dataInput" placeholder="Enter data to send to bot">
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Theme & Settings</h2>
+                <div class="button-group">
+                    <button id="toggleTheme" class="btn secondary">Toggle Theme Colors</button>
+                    <button id="showSettings" class="btn secondary">Show Settings</button>
+                </div>
+                <div class="theme-info">
+                    <div class="color-box" id="colorBox">
+                        <span>Current Theme Colors</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Device Features</h2>
+                <div class="button-group">
+                    <button id="requestLocation" class="btn warning">Request Location</button>
+                    <button id="requestContact" class="btn warning">Request Contact</button>
+                    <button id="openLink" class="btn info">Open External Link</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Invoice & Payments</h2>
+                <div class="button-group">
+                    <button id="createInvoice" class="btn success">Create Test Invoice</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>App Info</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Platform:</strong>
+                        <span id="platform">-</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Version:</strong>
+                        <span id="version">-</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Color Scheme:</strong>
+                        <span id="colorScheme">-</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Viewport Height:</strong>
+                        <span id="viewportHeight">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Event Log</h2>
+                <div class="log-container">
+                    <div id="eventLog" class="event-log"></div>
+                    <button id="clearLog" class="btn secondary small">Clear Log</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
