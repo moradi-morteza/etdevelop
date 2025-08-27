@@ -25,6 +25,7 @@ A comprehensive demonstration of all Telegram Mini App (Web App) features and ca
 - **Send Data**: Send data back to the bot
 - **Share Links**: Share app URL with other users
 - **External Links**: Open external URLs safely
+- **Answer Web App Query**: Respond to inline queries with custom results (answerWebAppQuery)
 
 ### 🎨 Theme & Styling
 - **Dynamic Theming**: Automatic adaptation to Telegram themes
@@ -95,7 +96,16 @@ Or use BotFather commands:
 - `/mybots` → Select your bot → Bot Settings → Menu Button
 - Set the Web App URL to your hosted app
 
-### 4. Alternative Setup Methods
+### 4. Enable Inline Mode (for answerWebAppQuery)
+
+To test the `answerWebAppQuery` feature, you need to enable inline mode for your bot:
+
+1. Message [@BotFather](https://t.me/BotFather)
+2. Send `/setinline` and select your bot
+3. Provide a placeholder text (e.g., "Type your query...")
+4. Now users can type `@yourbot query` to trigger inline queries
+
+### 5. Alternative Setup Methods
 
 #### Using Bot API directly:
 ```bash
@@ -143,6 +153,12 @@ reply_markup = InlineKeyboardMarkup(keyboard)
 - **Location**: Test location sharing (requires bot permissions)
 - **Contact**: Test contact sharing (requires bot permissions)
 - **External Links**: Test safe external URL opening
+- **Answer Web App Query**: Test inline query responses (requires inline mode enabled)
+  1. Enable inline mode for your bot using [@BotFather](https://t.me/BotFather) with `/setinline`
+  2. In any chat, type `@yourbot test` to trigger an inline query
+  3. Select the Mini App option from the results
+  4. Configure the result type (article, photo, gif, video) and content
+  5. Click "Answer WebApp Query" - this will send your custom result back to the chat
 
 ## Bot Implementation Example
 
@@ -151,7 +167,9 @@ Here's a basic Python bot to receive data from your Mini App:
 ```python
 import logging
 from telegram import Update, WebApp, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import InlineQueryHandler
 
 # Enable logging
 logging.basicConfig(level=logging.INFO)
@@ -174,6 +192,27 @@ async def handle_web_app_data(update: Update, context: ContextTypes.DEFAULT_TYPE
     data = update.effective_message.web_app_data.data
     await update.message.reply_text(f"Received data from Mini App: {data}")
 
+async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle inline queries - shows Mini App button in results."""
+    query = update.inline_query.query
+    
+    # Create a result that opens the Mini App
+    results = [
+        InlineQueryResultArticle(
+            id="webapp_result",
+            title="Open Mini App",
+            description="Create custom content using Mini App",
+            input_message_content=InputTextMessageContent(
+                message_text="Opening Mini App to create content..."
+            ),
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("🚀 Create Content", web_app=WebApp(url="https://your-domain.com/miniapp/"))
+            ]])
+        )
+    ]
+    
+    await update.inline_query.answer(results)
+
 def main() -> None:
     """Run the bot."""
     # Replace 'YOUR_BOT_TOKEN' with your actual bot token
@@ -181,6 +220,7 @@ def main() -> None:
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_web_app_data))
+    application.add_handler(InlineQueryHandler(inline_query))
 
     application.run_polling()
 
@@ -219,6 +259,7 @@ The app includes a real-time event log that shows:
 - `tg.expand()` - Expand to full height
 - `tg.close()` - Close the app
 - `tg.sendData(data)` - Send data to bot
+- `tg.answerWebAppQuery(queryId, result)` - Answer inline queries with custom results
 - `tg.showAlert(message)` - Show alert dialog
 - `tg.showConfirm(message, callback)` - Show confirmation dialog
 - `tg.showPopup(params, callback)` - Show custom popup

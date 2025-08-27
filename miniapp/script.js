@@ -27,6 +27,11 @@ const elements = {
     requestContact: document.getElementById('requestContact'),
     openLink: document.getElementById('openLink'),
     createInvoice: document.getElementById('createInvoice'),
+    answerWebAppQuery: document.getElementById('answerWebAppQuery'),
+    resultTitle: document.getElementById('resultTitle'),
+    resultDescription: document.getElementById('resultDescription'),
+    resultContent: document.getElementById('resultContent'),
+    resultType: document.getElementById('resultType'),
     platform: document.getElementById('platform'),
     version: document.getElementById('version'),
     colorScheme: document.getElementById('colorScheme'),
@@ -283,6 +288,108 @@ function setupEventListeners() {
         // Note: This requires bot implementation
         logEvent('Invoice creation (requires bot implementation)', 'warning');
         tg.showAlert('Invoice creation requires bot implementation with payment provider');
+    });
+
+    // Inline Query Results - answerWebAppQuery
+    elements.answerWebAppQuery.addEventListener('click', () => {
+        // Check if this was opened from an inline query
+        const queryId = tg.initDataUnsafe?.query_id;
+        if (!queryId) {
+            logEvent('answerWebAppQuery can only be used when opened from inline query', 'warning');
+            tg.showAlert('This feature only works when the Mini App is opened from an inline query (@yourbot query)');
+            return;
+        }
+
+        // Get form values
+        const title = elements.resultTitle.value || 'Default Title';
+        const description = elements.resultDescription.value || 'Default Description';
+        const messageText = elements.resultContent.value || 'Default message content';
+        const resultType = elements.resultType.value;
+
+        // Create the inline query result based on type
+        let result;
+        const resultId = 'webapp_result_' + Date.now();
+
+        switch (resultType) {
+            case 'article':
+                result = {
+                    type: 'article',
+                    id: resultId,
+                    title: title,
+                    description: description,
+                    input_message_content: {
+                        message_text: messageText,
+                        parse_mode: 'HTML'
+                    },
+                    thumb_url: 'https://via.placeholder.com/150x150.png?text=Article'
+                };
+                break;
+            
+            case 'photo':
+                result = {
+                    type: 'photo',
+                    id: resultId,
+                    title: title,
+                    description: description,
+                    photo_url: 'https://via.placeholder.com/800x600.jpg?text=Photo+Result',
+                    thumb_url: 'https://via.placeholder.com/150x150.jpg?text=Photo',
+                    caption: messageText,
+                    parse_mode: 'HTML'
+                };
+                break;
+            
+            case 'gif':
+                result = {
+                    type: 'gif',
+                    id: resultId,
+                    title: title,
+                    gif_url: 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif',
+                    thumb_url: 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/200_s.gif',
+                    caption: messageText,
+                    parse_mode: 'HTML'
+                };
+                break;
+            
+            case 'video':
+                result = {
+                    type: 'video',
+                    id: resultId,
+                    title: title,
+                    description: description,
+                    video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+                    thumb_url: 'https://via.placeholder.com/150x150.jpg?text=Video',
+                    mime_type: 'video/mp4',
+                    caption: messageText,
+                    parse_mode: 'HTML'
+                };
+                break;
+            
+            default:
+                result = {
+                    type: 'article',
+                    id: resultId,
+                    title: title,
+                    description: description,
+                    input_message_content: {
+                        message_text: messageText,
+                        parse_mode: 'HTML'
+                    }
+                };
+        }
+
+        try {
+            // Answer the web app query
+            tg.answerWebAppQuery(queryId, result);
+            logEvent(`answerWebAppQuery called with ${resultType} result`, 'success');
+            tg.HapticFeedback.notificationOccurred('success');
+            
+            // The app will close automatically after answering
+            logEvent('Query answered successfully! App will close.', 'info');
+        } catch (error) {
+            logEvent(`Error answering web app query: ${error.message}`, 'error');
+            tg.HapticFeedback.notificationOccurred('error');
+            tg.showAlert('Error answering query: ' + error.message);
+        }
     });
 
     // Log management

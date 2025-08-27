@@ -202,11 +202,14 @@ header h1 {
 }
 
 /* Input styles */
-.data-input {
+.data-input, .inline-query-form {
     margin-top: var(--spacing-md);
 }
 
-.data-input input {
+.data-input input,
+.inline-query-form input,
+.inline-query-form textarea,
+.inline-query-form select {
     width: 100%;
     padding: var(--spacing-md);
     border: 2px solid var(--tg-hint-color);
@@ -215,16 +218,41 @@ header h1 {
     background: var(--tg-bg-color);
     color: var(--tg-text-color);
     transition: border-color 0.2s ease;
+    margin-bottom: var(--spacing-sm);
 }
 
-.data-input input:focus {
+.data-input input:focus,
+.inline-query-form input:focus,
+.inline-query-form textarea:focus,
+.inline-query-form select:focus {
     outline: none;
     border-color: var(--tg-link-color);
     box-shadow: 0 0 0 3px rgba(36, 129, 204, 0.1);
 }
 
-.data-input input::placeholder {
+.data-input input::placeholder,
+.inline-query-form input::placeholder,
+.inline-query-form textarea::placeholder {
     color: var(--tg-hint-color);
+}
+
+.inline-query-form textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+}
+
+.inline-query-form select {
+    cursor: pointer;
+}
+
+.inline-query-form select::-ms-expand {
+    display: none;
+}
+
+.inline-query-form {
+    display: grid;
+    gap: var(--spacing-sm);
 }
 
 /* Theme info */
