@@ -271,6 +271,7 @@ class PurePHPBot {
     
     public function run(): void
     {
+
         $this->logger->log("PURE PHP BOT STARTED - Webhook mode activated");
         $this->processUpdate();
     }

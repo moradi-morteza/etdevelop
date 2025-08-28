@@ -5,6 +5,10 @@
  * Combined Telegram bot with two implementations: Pure PHP or Nutgram
  * Set BOT_TYPE in Const.php: 'nutgram' or 'purephp'
  */
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+ini_set('error_log', __DIR__ . '/storage/php_errors.log');
+error_reporting(E_ALL);
 
 require 'Const.php';
 require_once 'BotLogger.php';

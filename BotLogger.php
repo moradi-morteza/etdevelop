@@ -11,18 +11,29 @@ class BotLogger {
             mkdir($dir, 0755, true);
         }
     }
-    
+
     public function log($message, $data = null): void
     {
-        $timestamp = date('Y-m-d H:i:s');
-        $logEntry = "[{$timestamp}] {$message}";
-        
-        if ($data !== null) {
-            $logEntry .= "\nDATA: " . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        try {
+            $timestamp = date('Y-m-d H:i:s');
+            $entry = "[{$timestamp}] {$message}";
+            if ($data !== null) {
+                $entry .= "\nDATA: " . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            }
+            $entry .= "\n" . str_repeat('-', 80) . "\n";
+
+            $fh = fopen($this->logFile, 'ab');
+            if ($fh) {
+                flock($fh, LOCK_EX);
+                fwrite($fh, $entry);
+                fflush($fh);
+                flock($fh, LOCK_UN);
+                fclose($fh);
+            } else {
+                error_log("BOT_LOG_FAIL_OPEN: " . $entry);
+            }
+        } catch (Throwable $e) {
+            error_log("BOT_LOG_EXCEPTION: " . $e->getMessage());
         }
-        
-        $logEntry .= "\n" . str_repeat('-', 80) . "\n";
-        
-        file_put_contents($this->logFile, $logEntry, FILE_APPEND);
     }
 }
