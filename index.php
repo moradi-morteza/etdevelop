@@ -218,7 +218,7 @@ class NutgramBot {
                 'type' => $mimeType,
                 'path' => $filePath
             ];
-            $caption = json_encode($fileInfo, JSON_PRETTY_PRINT);
+            $caption = "THIS IS CAPTION";
             $this->logOutgoingRequest($method, $bot->chatId(), ['caption' => $caption, 'file_path' => $filePath]);
             $bot->$method(fopen($filePath, 'r'), caption: $caption);
             $this->logger->log(strtoupper($type) . " SENT SUCCESSFULLY", $fileInfo);
@@ -700,7 +700,7 @@ class PurePHPBot {
                 'type' => $mimeType,
                 'path' => $filePath
             ];
-            $caption = json_encode($fileInfo, JSON_PRETTY_PRINT);
+            $caption = "THIS IS CAPTION";
             $this->$method($chat_id, $filePath, $caption);
             $this->logger->log(strtoupper($type) . " SENT SUCCESSFULLY", $fileInfo);
         } else {
