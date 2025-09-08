@@ -24,7 +24,7 @@ function getBotApiUrl(?string $token = null, ?string $method = null): string
         $url .= "/{$method}";
     }
 
-    return $url."/";
+    return $url;
 }
 
 const BOTAPI = "7382545541:AAHQk4A5_4LnYUdH-P3CtuSsTejdEKEWmb4";

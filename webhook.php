@@ -49,7 +49,7 @@ class WebhookManager {
     
     private function makeRequest($method, $params = []): array
     {
-        $url = $this->baseUrl . $method;
+        $url = $this->baseUrl."/". $method;
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
