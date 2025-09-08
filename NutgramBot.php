@@ -2,15 +2,13 @@
 
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\RunningMode\Webhook;
+require_once 'bootstrap.php';
 
 class NutgramBot {
     private $bot;
     private $logger;
 
     public function __construct($token) {
-        require_once 'vendor/autoload.php';
-        require_once 'BotLogger.php';
-
         $this->logger = new BotLogger();
         $this->bot = new Nutgram($token);
         $this->bot->setRunningMode(Webhook::class);
@@ -177,7 +175,7 @@ class NutgramBot {
 
             if ($fileResponse && isset($fileResponse['file_path'])) {
                 $filePath = $fileResponse['file_path'];
-                $fileUrl = "https://api.telegram.org/file/bot" . $bot->getToken() . "/" . $filePath;
+                $fileUrl = ROOT_BOT_URL."/bot" . $bot->getToken() . "/" . $filePath;
 
                 // Determine filename
                 $fileName = $fileDetails['file_name'] ?? null;
@@ -221,7 +219,7 @@ class NutgramBot {
 
     private function logOutgoingRequest($method, $chatId, $parameters = []): void
     {
-        $url = "https://api.telegram.org/bot" . $this->bot->getToken() . "/" . $method;
+        $url = getBotApiUrl($this->bot->getToken(),$method);
         $this->logger->log("SEND REQUEST TO BOT SERVER : $url", $parameters);
     }
 

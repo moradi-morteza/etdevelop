@@ -36,7 +36,7 @@
   Run php -S localhost:8000 and visit http://localhost:8000/webhook.php to use the web interface.
  */
 
-require 'Const.php';
+require 'bootstrap.php';
 
 class WebhookManager {
     private $botToken;
@@ -44,7 +44,7 @@ class WebhookManager {
     
     public function __construct($token) {
         $this->botToken = $token;
-        $this->baseUrl = "https://api.telegram.org/bot{$token}/";
+        $this->baseUrl = getBotApiUrl($token);
     }
     
     private function makeRequest($method, $params = []): array

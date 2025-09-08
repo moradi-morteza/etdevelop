@@ -10,8 +10,7 @@ ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/storage/php_errors.log');
 error_reporting(E_ALL);
 
-require 'Const.php';
-require_once 'BotLogger.php';
+require_once 'bootstrap.php';
 require_once 'NutgramBot.php';
 require_once 'PurePHPBot.php';
 

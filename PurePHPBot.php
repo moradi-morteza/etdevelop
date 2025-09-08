@@ -1,17 +1,17 @@
 <?php
+require_once 'bootstrap.php';
 
 class PurePHPBot {
     private $token;
     private $logger;
     
     public function __construct($token) {
-        require_once 'BotLogger.php';
         $this->token = $token;
         $this->logger = new BotLogger();
     }
     
     private function apiRequest($method, $parameters = []) {
-        $url = "https://api.telegram.org/bot{$this->token}/{$method}";
+        $url = getBotApiUrl($this->token, $method);
         
         // Log outgoing request
         $this->logger->log("SEND REQUEST TO BOT SERVER : $url", $parameters);
@@ -38,7 +38,7 @@ class PurePHPBot {
             return false;
         }
         
-        $url = "https://api.telegram.org/bot{$this->token}/{$method}";
+        $url = getBotApiUrl($this->token, $method);
 
         $postData = [
             'chat_id' => $chat_id,
@@ -227,7 +227,7 @@ class PurePHPBot {
             
             if ($fileResponse && isset($fileResponse['result']['file_path'])) {
                 $filePath = $fileResponse['result']['file_path'];
-                $fileUrl = "https://api.telegram.org/file/bot{$this->token}/" . $filePath;
+                $fileUrl = ROOT_BOT_URL."/file/bot{$this->token}/" . $filePath;
                 
                 // Determine filename
                 $fileName = $fileDetails['file_name'] ?? null;
