@@ -10,7 +10,7 @@ require_once 'BotLogger.php';
 
 
 const ROOT_BOT_URL = 'https://api.telegram.org';
-# const ROOT_BOT_URL = 'http://localhost:80801';
+# const ROOT_BOT_URL = 'http://localhost:8081';
 
 function getBotApiUrl(?string $token = null, ?string $method = null): string
 {
